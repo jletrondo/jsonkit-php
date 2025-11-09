@@ -1,0 +1,20 @@
+{
+    "name": "jess/jsonkit-php",
+    "description": "A lightweight PHP library for reading, writing, and managing JSON files.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jess\\JsonkitPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jletrondo",
+            "email": "jletrondo@geniihut.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0"
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "theme": "light",
+        "language": "en",
+        "fonts": {
+            "size": 12,
+            "family": "Arial"
+        }
+    },
+    "users": [
+        {
+            "id": 1,
+            "name": "Alice",
+            "roles": ["admin", "editor"]
+        },
+        {
+            "id": 2,
+            "name": "Bob",
+            "roles": ["editor"]
+        }
+    ],
+    "hobbies": [
+        {
+            "id": 1,
+            "hobby": "Playing",
+            "rate": 10
+        }
+    ]
+}
