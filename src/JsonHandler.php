@@ -8,26 +8,33 @@ class JsonHandler
     protected array $data = [];
     protected bool $autosave = false;
 
-    public function __construct(string $path, bool $autosave = false)
+    public function __construct(string $path = "", bool $autosave = false)
     {
         $this->path = $path;
         $this->autosave = $autosave;
         $this->load();
     }
 
-    public function setAutoSave(bool $autosave): void
-    {
-        $this->autosave = $autosave;
-    }
-
-    protected function load(): void
+    public function load(array $data = []): self
     {
         if (file_exists($this->path)) {
             $json = file_get_contents($this->path);
             $this->data = json_decode($json, true) ?? [];
         } else {
-            $this->data = [];
+            $this->data = $data;
         }
+        return $this;
+    }
+
+    public function setPath($path): self
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+    public function setAutoSave(bool $autosave): void
+    {
+        $this->autosave = $autosave;
     }
 
     public function all(): array
@@ -50,9 +57,6 @@ class JsonHandler
         return $value;
     }
 
-    /**
-     * Return $this instead of static for PHP 7.4 compatibility
-     */
     public function set(string $key, $value)
     {
         $keys = explode('.', $key);
@@ -104,7 +108,7 @@ class JsonHandler
      * @param mixed $value The value to remove
      * @return $this
      */
-    public function removeValue(string $key, $value)
+    public function removeArrayValue(string $key, $value)
     {
         $current = $this->get($key, []);
 
@@ -130,18 +134,27 @@ class JsonHandler
     }
 
 
-    public function save(bool $pretty = true): bool
+    public function save(string $jsonPath = "", bool $pretty = true): bool
     {
+        if (!empty($jsonPath)) {
+            $this->setPath($jsonPath);
+        }
         $flags = $pretty ? JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES : 0;
         $json = json_encode($this->data, $flags);
         return (bool) file_put_contents($this->path, $json);
     }
 
-    public function append(string $key, $value)
+    public function appendArray(string $key, $value, bool $isUnique = false)
     {
         $current = $this->get($key, []);
         if (!is_array($current)) {
             throw new \RuntimeException("Cannot append to non-array key: {$key}");
+        }
+
+        if ($isUnique) {
+            if (in_array($value, $current)) {
+                throw new \RuntimeException("Duplicate entry found for key: {$key}");
+            }
         }
 
         $current[] = $value;
@@ -154,16 +167,6 @@ class JsonHandler
         return $this;
     }
 
-    /**
-     * Append a value to an array key but ensure uniqueness.
-     *
-     * @param string $key The array key (dot notation supported)
-     * @param mixed $value Value to append
-     * @param bool $uniqueByKey If true, prevents duplicate keys in associative arrays
-     *
-     * @return $this
-     * @throws \RuntimeException If duplicate is found
-     */
     public function appendUnique(string $key, $value, bool $uniqueByKey = false)
     {
         $current = $this->get($key, []);
@@ -196,15 +199,7 @@ class JsonHandler
         return $this;
     }
 
-    /**
-     * Remove array items at a given key that match a condition.
-     *
-     * @param string $key Dot notation key pointing to an array
-     * @param callable $callback Function that receives each item and returns true to remove it
-     * @return $this
-     * @throws \RuntimeException
-     */
-    public function removeWhere(string $key, callable $callback)
+    public function removeArrayByCallback(string $key, callable $callback)
     {
         $current = $this->get($key, []);
 
@@ -227,5 +222,82 @@ class JsonHandler
         }
 
         return $this;
+    }
+
+    /**
+     * Finds all items matching a callback and returns them in a 
+     * new PHP array that preserves their original nested structure.
+     *
+     * @param callable $callback The filter function: fn($value, $key)
+     * @return array A new array containing only the found items.
+     */
+    public function find(callable $callback): array
+    {
+        // 1. Get the flat list of [path => value] results
+        $foundItems = $this->findPaths($callback);
+        
+        $rebuiltArray = [];
+
+        // 2. Iterate and rebuild the array structure
+        foreach ($foundItems as $key => $value) {
+            $keys = explode('.', $key);
+            $data =& $rebuiltArray;
+
+            // This logic is borrowed from the set() method
+            while (count($keys) > 1) {
+                $k = array_shift($keys);
+                if (!isset($data[$k]) || !is_array($data[$k])) {
+                    $data[$k] = [];
+                }
+                $data =& $data[$k];
+            }
+            
+            // Set the value at the final, nested location
+            $data[array_shift($keys)] = $value;
+        }
+
+        return $rebuiltArray;
+    }
+
+    /**
+     * Recursively finds all key/value pairs that match a filter callback
+     * and returns a flat array of [path => value].
+     *
+     * @param callable $callback The filter function: fn($value, $key)
+     * @return array An associative array of [dot.notation.key => value]
+     */
+    public function findPaths(callable $callback): array
+    {
+        // Start the recursive search on the entire data set
+        return $this->findRecursive($callback, $this->data);
+    }
+
+    /**
+     * Helper function for recursive finding.
+     */
+    protected function findRecursive(callable $callback, array $data, string $parentKey = ''): array
+    {
+        $results = [];
+
+        foreach ($data as $key => $value) {
+            // Construct the dot-notation key for the current item
+            $currentKey = $parentKey ? $parentKey . '.' . $key : (string)$key;
+
+            // Run the user's callback
+            if ($callback($value, $currentKey)) {
+                $results[$currentKey] = $value;
+            }
+
+            // Recurse into sub-arrays
+            if (is_array($value)) {
+                // Merge results from nested calls
+                $results = array_merge(
+                    $results,
+                    $this->findRecursive($callback, $value, $currentKey)
+                );
+            }
+        }
+
+        return $results;
     }
 }

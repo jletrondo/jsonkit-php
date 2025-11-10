@@ -1,0 +1,12 @@
+{
+    "users": {
+        "name": "Jason",
+        "age": 24,
+        "hobbies": [
+            "PC",
+            "Basketball",
+            "Exercise",
+            "Tennis"
+        ]
+    }
+}
