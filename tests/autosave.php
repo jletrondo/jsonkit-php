@@ -11,7 +11,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 use Jess\JsonkitPhp\JsonFileManager as Handler;
 
-$json = new Handler(__DIR__ . '/json/sample.json'); // You can put autosave flag to the second parameter
+$json = new Handler(__DIR__ . '/json/test.json'); // You can put autosave flag to the second parameter
 $json->setAutoSave(true);
 
 $json->set('saved', [

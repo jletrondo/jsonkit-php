@@ -6,7 +6,7 @@ use Jess\JsonkitPhp\JsonFileManager as Handler;
 $json = new Handler();
 
 $data = $json->load([
-    'numbers' => ['1', '2', '3']
+    'numbers' => ['1', '2', '3' , [ 'test' => 'hahaha ']]
 ])->save(__DIR__ . '/json/numbers.json');
 
 echo "\nbefore removing...\n";
