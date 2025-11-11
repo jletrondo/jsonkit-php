@@ -1,6 +1,6 @@
 {
-    "users": [
-        {
+    "users": {
+        "0": {
             "id": 1,
             "name": "Alice",
             "email": "alice@example.com",
@@ -22,7 +22,7 @@
                 }
             }
         },
-        {
+        "1": {
             "id": 2,
             "name": "Bob",
             "email": "bob@example.com",
@@ -39,8 +39,12 @@
                     "zip": "67890"
                 }
             }
-        }
-    ],
+        },
+        "hobbies": [
+            "Tennis",
+            "Tennis"
+        ]
+    },
     "settings": {
         "theme": "dark",
         "notifications": {

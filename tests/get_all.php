@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test for JsonHandler::all() method.
+ * Test for JsonFileManager::all() method.
  *
  * Purpose: Verify that the all() method returns the entire
  * data structure loaded from the specified JSON file.
@@ -9,8 +9,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Jess\JsonkitPhp\JsonHandler;
+use Jess\JsonkitPhp\JsonFileManager;
 
-$json = new JsonHandler(__DIR__ . '/json/sample.json');
+$json = new JsonFileManager(__DIR__ . '/json/sample.json');
 
 print_r($json->all());

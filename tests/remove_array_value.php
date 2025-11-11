@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
-use Jess\JsonkitPhp\JsonHandler as Handler;
+use Jess\JsonkitPhp\JsonFileManager as Handler;
 
 $json = new Handler(__DIR__ . '/json/remove.json');
 

@@ -1,6 +1,6 @@
-# JsonHandler PHP Library
+# JsonFileManager PHP Library
 
-**JsonHandler** is a lightweight PHP class for simple, robust manipulation of JSON files—read, write, update, search, and remove using dot notation.
+**JsonFileManager** is a lightweight PHP class for simple, robust manipulation of JSON files—read, write, update, search, and remove using dot notation.
 
 ---
 
@@ -18,10 +18,10 @@ composer require jess/jsonkit-php
 
 ```php
 
-use Jess\JsonkitPhp\JsonHandler;
+use Jess\JsonkitPhp\JsonFileManager;
 
 // Initialize from a file path
-$handler = new JsonHandler('data.json', true);
+$handler = new JsonFileManager('data.json', true);
 
 // Get all data
 $data = $handler->all();

@@ -2,7 +2,7 @@
 
 namespace Jess\JsonkitPhp;
 
-class JsonHandler
+class JsonFileManager
 {
     protected string $path;
     protected array $data = [];
@@ -84,7 +84,7 @@ class JsonHandler
         $data =& $this->data;
 
         foreach ($keys as $i => $k) {
-            if (!isset($data[$k])) return $this;
+            if (!isset($data[$k])) { return $this; }
 
             if ($i === count($keys) - 1) {
                 unset($data[$k]);
@@ -151,10 +151,8 @@ class JsonHandler
             throw new \RuntimeException("Cannot append to non-array key: {$key}");
         }
 
-        if ($isUnique) {
-            if (in_array($value, $current)) {
-                throw new \RuntimeException("Duplicate entry found for key: {$key}");
-            }
+        if ($isUnique && in_array($value, $current)) {
+            throw new \RuntimeException("Duplicate entry found for key: {$key}");
         }
 
         $current[] = $value;
@@ -225,7 +223,7 @@ class JsonHandler
     }
 
     /**
-     * Finds all items matching a callback and returns them in a 
+     * Finds all items matching a callback and returns them in a
      * new PHP array that preserves their original nested structure.
      *
      * @param callable $callback The filter function: fn($value, $key)

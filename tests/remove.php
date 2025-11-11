@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Test for JsonHandler::remove() method.
+ * Test for JsonFileManager::remove() method.
  *
  * Purpose: Verify that the remove() method correctly removes the specified key
  * and its associated data from the loaded JSON structure.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
-use Jess\JsonkitPhp\JsonHandler as Handler;
+use Jess\JsonkitPhp\JsonFileManager as Handler;
 
 $json = new Handler(__DIR__ . '/json/sample.json');
 
