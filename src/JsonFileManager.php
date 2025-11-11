@@ -2,6 +2,7 @@
 
 namespace Jess\JsonkitPhp;
 
+
 /**
  * Class JsonFileManager
  *
